@@ -17,7 +17,7 @@ from nltk import word_tokenize
 import re
 import hashlib as hl
 import uuid
-from word_normalization
+from word_normalization import *
 import redis
 
 try:
