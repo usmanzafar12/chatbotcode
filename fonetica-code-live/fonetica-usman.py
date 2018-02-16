@@ -62,7 +62,7 @@ def handle_message_dummy():
 	sender_id, recipient_id, comment_id, message_text = fb_msg_parse(data)
 	session['session_id'] = hl.md5(str(sender_id)).hexdigest()
 	logging.info("Facebook message parsed")
-	message_text = normalization_redis.eng_word_correction(message_text)
+	message_text = eng_word_correction(message_text)
 	query(update_query_normalization, (message_text, comment_id))
 
 	#message_text = ner(message_text)
