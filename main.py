@@ -72,7 +72,7 @@ def handle_message_dummy():
 									recipient_id, comment_id)
 	logging.info("This is the type of the response")
 	logging.info(type(response))
-	if type(response) is str:
+	if type(response) is unicode:
 		send_message_response(sender_id, comment_id, response)
 	return Response(status=200)
 
