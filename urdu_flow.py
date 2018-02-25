@@ -7,15 +7,15 @@ from facebook_send import *
 def urdu_response(message_text, sender_id, recipient_id, comment_id):
 	#message_text = urdu_normalization.eng_word_correction(message_text)
 	query(update_query_normalization, (message_text, comment_id))
-	try:
-		translated_message = google_translate(message_text, comment_id)
-		if translated_message == '':
-			translated_message = "There was an error with the \
+	#try:
+	translated_message = google_translate(message_text, comment_id)
+	if translated_message == '':
+		translated_message = "There was an error with the \
 												 communication service"
-	except:
-		send_message(sender_id, comment_id, "There was an error with the \
-											 translation service")
-		return Response(status=200)
+	#except:
+		#send_message(sender_id, comment_id, "There was an error with the \
+			#								 translation service")
+		#return Response(status=200)
 	try:
 		api_response = api_ai_query_urdu(translated_message, comment_id)
 	except:
