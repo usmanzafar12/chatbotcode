@@ -48,9 +48,11 @@ def google_translate(user_text, comment_id):
 	'''
 	this function will translate the received text using google translate
 	'''
-	trans_input = user_text
+    logging.info("This is from the GOOGLE TRANSLATE FUNCTION")
+    logging.info(user_text)
 	mid_trans = translator.translate(user_text, src="hi", dest = "ur").text
-	trans_input = translator.translate(mid_trans, src = "ur", dest = "en").text
+    logging.info(mid_trans)
+    trans_input = translator.translate(mid_trans, src = "ur", dest = "en").text
 	query(update_query_translation, (trans_input, comment_id))
 	logging.info("TEXT Translated")
 	return trans_input
