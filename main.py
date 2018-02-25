@@ -74,6 +74,7 @@ def handle_message_dummy():
 		send_message_response(sender_id, comment_id, response)
 	return Response(status=200)
 
+
 @app.route('/dialogflow', methods=['POST'])
 def dialogflow():
 	# Primary function in which whole code is run
@@ -111,7 +112,6 @@ def dialogflow():
 		#logging.info(data)
 	test = jsonify(webhook_data)
 	logging.info(json.dumps(webhook_data))
-	#resp = Response(test, status=200, mimetype='application/json')s
 	return test
 
 
@@ -136,6 +136,8 @@ def fb_msg_parse(data):
 def lang_detect(message_text):
 	translator = Translator(service_urls = ['translate.google.com.pk'])
 	detected_lang = translator.detect(message_text).lang
+	logging.info(" This is the value the language detected")
+	logging.info.(detected_lang)
 	if detected_lang.find('en') == -1:
 		return 'urdu'
 	else:
