@@ -50,7 +50,7 @@ def google_translate(user_text, comment_id):
 	'''
 	logging.info("This is from the GOOGLE TRANSLATE FUNCTION")
 	logging.info(user_text)
-
+	translator = Translator(service_urls = ['translate.google.com.pk'])
 	mid_trans = translator.translate(user_text, src="hi", dest = "ur").text
 	logging.info(mid_trans)
 	trans_input = translator.translate(mid_trans, src = "ur", dest = "en").text
