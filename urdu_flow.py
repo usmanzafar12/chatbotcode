@@ -9,9 +9,9 @@ def urdu_response(message_text, sender_id, recipient_id, comment_id):
 	query(update_query_normalization, (message_text, comment_id))
 	try:
 		translated_message = google_translate(message_text, comment_id)
-	if not translated_message:
-		translated_message = "There was an error with the \
-												 communication service"
+		if not translated_message:
+			translated_message = "There was an error with the \
+													 communication service"
 	except:
 		send_message(sender_id, comment_id, "There was an error with the \
 											 translation service")
