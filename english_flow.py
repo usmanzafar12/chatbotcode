@@ -2,6 +2,7 @@ from query import *
 from helper import *
 from word_normalization import *
 from facebook_send import *
+from flask import Response
 
 
 def api_ai_query(text, comment_id):

@@ -1,8 +1,7 @@
 from query import *
 from helper import *
 from googletrans import Translator
-from facebook_send import *
-
+from flask import Response
 
 def urdu_response(message_text, sender_id, recipient_id, comment_id):
 	#message_text = urdu_normalization.eng_word_correction(message_text)
