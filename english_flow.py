@@ -9,8 +9,9 @@ def api_ai_query(text, comment_id):
 	logging.info("Api AI entered")
 	api_endpoint = "https://api.dialogflow.com/v1/query/?v=20150910"
 	logging.info("API AI QUERY CALLED")
-    logging.info("This is the session")
-    logging.info(session['session_id'])
+	logging.info("This is the session")
+	logging.info(session['session_id'])
+
 	headers = {'Authorization' : 'Bearer 3a67ab4afb49424587183ae8b04bf88b',
 			   'Content-Type' : 'application/json'}
 	body = {'query' : text,
