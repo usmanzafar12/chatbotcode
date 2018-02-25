@@ -28,7 +28,7 @@ def eng_response(message_text, sender_id, recipient_id, comment_id):
 	message_text = normalization_redis.eng_word_correction(message_text)
 	query(update_query_normalization, (message_text, comment_id))
 	try:
-		api_response = api_ai_query(translated_message, comment_id)
+		api_response = api_ai_query(message_text, comment_id)
 	except:
 		send_message(sender_id, comment_id, "There was an error with fetching \
 										 the response from the AI")
