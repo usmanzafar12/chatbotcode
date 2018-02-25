@@ -1,3 +1,8 @@
+from query import *
+from helper import *
+from googletrans import Translator
+
+import
 def urdu_response(message_text, sender_id, recipient_id, comment_id):
 	#message_text = urdu_normalization.eng_word_correction(message_text)
 	query(update_query_normalization, (message_text, comment_id))

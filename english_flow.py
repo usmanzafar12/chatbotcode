@@ -1,3 +1,7 @@
+from query import *
+from helper import *
+from word_normalization import *
+
 def api_ai_query(text, comment_id):
 	logging.info("Api AI entered")
 	api_endpoint = "https://api.dialogflow.com/v1/query/?v=20150910"
