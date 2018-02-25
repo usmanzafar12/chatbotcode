@@ -62,22 +62,7 @@ def handle_message_dummy():
 	sender_id, recipient_id, comment_id, message_text = fb_msg_parse(data)
 	session['session_id'] = hl.md5(str(sender_id)).hexdigest()
 	logging.info("Facebook message parsed")
-	message_text = eng_word_correction(message_text)
-	query(update_query_normalization, (message_text, comment_id))
 
-	#message_text = ner(message_text)
-	try:
-		translated_message = google_translate(message_text, comment_id)
-	except:
-		send_message(sender_id, comment_id, "There was an error with the \
-											 translation service")
-		return Response(status=200)
-	try:
-		api_response = api_ai_query(translated_message, comment_id)
-	except:
-		send_message(sender_id, comment_id, "There was an error with fetching \
-										 the response from the AI")
-		return Response(status=200)
 	send_message_response(sender_id, comment_id, api_response)
 	return Response(status=200)
 
@@ -117,6 +102,44 @@ def google_translate(user_text, comment_id):
 	#	query(update_query_translation, (trans_input, comment_id))
 	#	logging.info("TEXT Translated")
 	#	return trans_input
+
+
+def urdu_response(message_text, commend_id, sender_id, recipient_id):
+	message_text = eng_word_correction(message_text)
+	query(update_query_normalization, (message_text, comment_id))
+
+	#message_text = ner(message_text)
+	try:
+		translated_message = google_translate(message_text, comment_id)
+	except:
+		send_message(sender_id, comment_id, "There was an error with the \
+											 translation service")
+		return Response(status=200)
+	try:
+		api_response = api_ai_query(translated_message, comment_id)
+	except:
+		send_message(sender_id, comment_id, "There was an error with fetching \
+										 the response from the AI")
+		return Response(status=200)
+
+
+def eng_response(message_text, commend_id, sender_id, recipient_id):
+	message_text = eng_word_correction(message_text)
+	query(update_query_normalization, (message_text, comment_id))
+
+	#message_text = ner(message_text)
+	try:
+		translated_message = google_translate(message_text, comment_id)
+	except:
+		send_message(sender_id, comment_id, "There was an error with the \
+											 translation service")
+		return Response(status=200)
+	try:
+		api_response = api_ai_query(translated_message, comment_id)
+	except:
+		send_message(sender_id, comment_id, "There was an error with fetching \
+										 the response from the AI")
+		return Response(status=200)
 
 
 """
