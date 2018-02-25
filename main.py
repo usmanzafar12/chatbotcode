@@ -19,6 +19,9 @@ import hashlib as hl
 import uuid
 from word_normalization import *
 import redis
+from urdu_flow import *
+from english_flow import *
+
 
 try:
 	import apiai
@@ -57,106 +60,19 @@ def handle_verification():
 def handle_message_dummy():
 	# Primary function in which whole code is run
 	logging.info("Facebook push notification received")
-#	dictionary = load_dictionary()
 	data = request.get_json()
 	sender_id, recipient_id, comment_id, message_text = fb_msg_parse(data)
 	session['session_id'] = hl.md5(str(sender_id)).hexdigest()
 	logging.info("Facebook message parsed")
-	message_text = normalization_redis.eng_word_correction(message_text)
-	query(update_query_normalization, (message_text, comment_id))
-
-	#message_text = ner(message_text)
-	try:
-		translated_message = google_translate(message_text, comment_id)
-	except:
-		send_message(sender_id, comment_id, "There was an error with the \
-											 translation service")
-		return Response(status=200)
-	try:
-		api_response = api_ai_query(translated_message, comment_id)
-	except:
-		send_message(sender_id, comment_id, "There was an error with fetching \
-										 the response from the AI")
-		return Response(status=200)
-	send_message_response(sender_id, comment_id, api_response)
-	return Response(status=200)
-
-
-def fb_msg_parse(data):
-	for entry in data["entry"]:
-		for messaging_event in entry["messaging"]:
-			try:
-				message_text = messaging_event["message"]["text"]
-			except Exception as e:
-				message_text = 'NEW'
-			sender_id = messaging_event["sender"]["id"]
-			recipient_id = messaging_event["recipient"]["id"]
-			comment_id = messaging_event["message"]["mid"]
-			timestamp = get_timestamp(messaging_event['timestamp'])
-			#updated
-			query(insert_query,(0,0,0,timestamp,sender_id,comment_id,\
-								message_text,'','','',''))
-			logging.info("facebook message inserted in db")
-			return sender_id, recipient_id, comment_id, message_text
-
-
-def google_translate(user_text, comment_id):
-	'''
-	this function will translate the received text using google translate
-	'''
-	#translator = Translator(service_urls = ['translate.google.com.pk'])
-	#detected_lang = translator.detect(user_text).lang
-	#if(detected_lang.find('en')!=-1):
-		#passthrough for english
-	trans_input = user_text
-	query(update_query_translation, (trans_input, comment_id))
-	return trans_input
-	#else:
-	#	mid_trans = translator.translate(user_text, src="hi", dest = "ur").text
-	#	trans_input = translator.translate(mid_trans, src = "ur", dest = "en").text
-	#	query(update_query_translation, (trans_input, comment_id))
-	#	logging.info("TEXT Translated")
-	#	return trans_input
-
-
-"""
-def api_ai_query(text, comment_id):
-	logging.info("Api AI entered")
-	request = ai.text_request()
-	request.query = text
-	response = json.loads(request.getresponse().read().decode('utf-8'))
-	responseStatus = response['status']['code']
-	if (responseStatus == 200):
-		response = response['result']['fulfillment']['speech']
-		query(update_query_apiai,(response, comment_id))
-		logging.info("api ai returning")
-		return response
+	if lang_detect(message_text) == 'urdu':
+		response = eng_response(message_text, sender_id, \
+									recipient_id, comment_id)
 	else:
-		response = "Sorry, I couldn't understand that question"
-		query(update_query_apiai,(response, comment_id))
-		logging.info("api ai returning")
-		return response
-"""
-
-
-def api_ai_query(text, comment_id):
-	logging.info("Api AI entered")
-	api_endpoint = "https://api.dialogflow.com/v1/query/?v=20150910"
-	#logging.info("API AI QUERY CALLED")
-	headers = {'Authorization' : 'Bearer 3a67ab4afb49424587183ae8b04bf88b',
-			   'Content-Type' : 'application/json'}
-	body = {'query' : text,
-			'lang' : 'en',
-			'sessionId' :  session['session_id'] }
-	body_json = json.dumps(body)
-	apiai_result = requests.post(api_endpoint, \
-								 headers=headers, data=body_json).json()
-	logging.info(apiai_result)
-	logging.info("Dict, %s", apiai_result['result']['fulfillment']['speech'])
-	api_response = apiai_result['result']['fulfillment']['speech']
-	query(update_query_apiai, (api_response, comment_id))
-	return api_response
-
+		response = urdu_response(message_text, sender_id, \
+									recipient_id, comment_id)
+	if type(response) is str:
+		send_message_response(sender_id, comment_id, response)
+	return Response(status=200)
 
 @app.route('/dialogflow', methods=['POST'])
 def dialogflow():
@@ -197,6 +113,33 @@ def dialogflow():
 	logging.info(json.dumps(webhook_data))
 	#resp = Response(test, status=200, mimetype='application/json')s
 	return test
+
+
+def fb_msg_parse(data):
+	for entry in data["entry"]:
+		for messaging_event in entry["messaging"]:
+			try:
+				message_text = messaging_event["message"]["text"]
+			except Exception as e:
+				message_text = 'NEW'
+			sender_id = messaging_event["sender"]["id"]
+			recipient_id = messaging_event["recipient"]["id"]
+			comment_id = messaging_event["message"]["mid"]
+			timestamp = get_timestamp(messaging_event['timestamp'])
+			#updated
+			query(insert_query,(0,0,0,timestamp,sender_id,comment_id,\
+								message_text,'','','',''))
+			logging.info("facebook message inserted in db")
+			return sender_id, recipient_id, comment_id, message_text
+
+
+def lang_detect(message_text):
+	translator = Translator(service_urls = ['translate.google.com.pk'])
+	detected_lang = translator.detect(user_text).lang
+	if detected_lang.find('en') == -1:
+		return 'urdu'
+	else:
+		return 'english'
 
 
 if __name__ == '__main__':
