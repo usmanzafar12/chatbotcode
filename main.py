@@ -70,9 +70,9 @@ def handle_message_dummy():
 	else:
 		response = eng_response(message_text, sender_id, \
 									recipient_id, comment_id)
+	logging.info("This is the type of the response")
+	logging.info(type(response))
 	if type(response) is str:
-		logging.info("This is the type of the response")
-		logging.info(type(response))
 		send_message_response(sender_id, comment_id, response)
 	return Response(status=200)
 
