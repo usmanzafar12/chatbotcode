@@ -1,6 +1,7 @@
 from query import *
 from helper import *
 from googletrans import Translator
+from facebook_send import *
 
 
 def urdu_response(message_text, sender_id, recipient_id, comment_id):

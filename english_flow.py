@@ -1,6 +1,8 @@
 from query import *
 from helper import *
 from word_normalization import *
+from facebook_send import *
+
 
 def api_ai_query(text, comment_id):
 	logging.info("Api AI entered")
