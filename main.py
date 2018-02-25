@@ -65,10 +65,10 @@ def handle_message_dummy():
 	session['session_id'] = hl.md5(str(sender_id)).hexdigest()
 	logging.info("Facebook message parsed")
 	if lang_detect(message_text) == 'urdu':
-		response = eng_response(message_text, sender_id, \
+		response = urdu_response(message_text, sender_id, \
 									recipient_id, comment_id)
 	else:
-		response = urdu_response(message_text, sender_id, \
+		response = eng_response(message_text, sender_id, \
 									recipient_id, comment_id)
 	if type(response) is str:
 		send_message_response(sender_id, comment_id, response)
