@@ -135,7 +135,7 @@ def fb_msg_parse(data):
 
 def lang_detect(message_text):
 	translator = Translator(service_urls = ['translate.google.com.pk'])
-	detected_lang = translator.detect(user_text).lang
+	detected_lang = translator.detect(message_text).lang
 	if detected_lang.find('en') == -1:
 		return 'urdu'
 	else:
