@@ -83,3 +83,12 @@ def maxmatch(sentence, wordlist, words):
         remainder = sentence[1:]
         words.append(firstword)
         return words, maxmatch(remainder, wordlist, words)
+
+
+def remove_contexts(remaining_context, data):
+	contexts = []
+	for value in data['result']['contexts']:
+		if value['name'] != remaining_context:
+			value['lifespan'] = 0
+		contexts.append(value)
+	return contexts

@@ -2,5 +2,5 @@
 
 
 
-def eng_word_correction(message):
+def urdu_word_correction(message):
     pass
