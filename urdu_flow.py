@@ -3,15 +3,22 @@ from helper import *
 from googletrans import Translator
 from flask import Response, session
 from facebook_send import *
+from word_normalization import *
+from restore_entities import *
+
 
 def urdu_response(message_text, sender_id, recipient_id, comment_id):
 	#message_text = urdu_normalization.eng_word_correction(message_text)
 	query(update_query_normalization, (message_text, comment_id))
 	try:
+		extracted_entities, message_text = ner(message_text)
+
 		translated_message = google_translate(message_text, comment_id)
+
 		if not translated_message:
 			translated_message = "There was an error with the \
 													 communication service"
+   		message_text = restore_entities(extracted_entities, message_text)
 	except:
 		send_message(sender_id, comment_id, "There was an error with the \
 											 translation service")
