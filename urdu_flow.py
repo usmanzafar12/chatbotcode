@@ -9,19 +9,20 @@ from word_normalization import *
 def urdu_response(message_text, sender_id, recipient_id, comment_id):
 	#message_text = urdu_normalization.eng_word_correction(message_text)
 	query(update_query_normalization, (message_text, comment_id))
-	try:
-		extracted_entities, message_text = ner(message_text)
+	extracted_entities, message_text = ner(message_text)
 
-		translated_message = google_translate(message_text, comment_id)
+	translated_message = google_translate(message_text, comment_id)
 
-		if not translated_message:
-			translated_message = "There was an error with the \
-													 communication service"
-   		message_text = restore_entities(extracted_entities, message_text)
-	except:
-		send_message(sender_id, comment_id, "There was an error with the \
-											 translation service")
-		return Response(status=200)
+	if not translated_message:
+		translated_message = "There was an error with the \
+												 communication service"
+		translated_message = restore_entities(extracted_entities, \
+											translated_message)
+	send_message(sender_id, comment_id, "There was an error with the \
+									 translation service")
+	logging.info("This is the translated message")
+	logging.info(translated_message)
+	return Response(status=200)
 	try:
 		api_response = api_ai_query_urdu(translated_message, comment_id)
 	except:
