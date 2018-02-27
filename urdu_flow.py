@@ -4,7 +4,6 @@ from googletrans import Translator
 from flask import Response, session
 from facebook_send import *
 from word_normalization import *
-from restore_entities import *
 
 
 def urdu_response(message_text, sender_id, recipient_id, comment_id):
