@@ -1,7 +1,7 @@
 import sys
 import logging
 import json, requests
-from flask import Flask, session, Response, request, jsonify, make_resposne
+from flask import Flask, session, Response, request, jsonify, make_response
 import logging
 from googletrans import Translator
 import string
