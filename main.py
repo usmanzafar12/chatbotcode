@@ -118,6 +118,7 @@ def dialogflow():
 
 
 def fb_msg_parse(data):
+	logging.info(json.dumps(data))
 	for entry in data["entry"]:
 		for messaging_event in entry["messaging"]:
 			try:
@@ -132,6 +133,7 @@ def fb_msg_parse(data):
 			query(insert_query,(0,0,0,timestamp,sender_id,comment_id,\
 								message_text,'','','',''))
 			logging.info("facebook message inserted in db")
+
 			return sender_id, recipient_id, comment_id, message_text
 
 
