@@ -119,10 +119,16 @@ def dialogflow():
 
 @app.route('/response/<int:id>', methods=['POST'])
 def chatbot_response(id):
-	resp = make_resposne('is this working', 200)
+	message = "this is the id " + str(id) + " you sent. enjoy"
+	resp = make_resposne(message, 200)
 	return resp
 
 
+@app.route('/response/<int:id>/<value>', methods=['POST'])
+def verification_check(id, value):
+	msg = "this is the id " + str(id) + " and string value " + str(value)
+	resp = make_resposne(message, 200)
+	return resp
 
 def fb_msg_parse(data):
 	logging.info(json.dumps(data))
