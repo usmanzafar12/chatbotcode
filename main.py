@@ -1,7 +1,7 @@
 import sys
 import logging
 import json, requests
-from flask import Flask, session, Response, request, jsonify
+from flask import Flask, session, Response, request, jsonify, make_resposne()
 import logging
 from googletrans import Translator
 import string
@@ -115,6 +115,13 @@ def dialogflow():
 	test = jsonify(webhook_data)
 	logging.info(json.dumps(webhook_data))
 	return test
+
+
+@app.route('/response/<int:id>', methods=['POST'])
+def chatbot_response(id):
+	resp = make_resposne('is this working', 200)
+	return resp
+
 
 
 def fb_msg_parse(data):
