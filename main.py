@@ -127,7 +127,7 @@ def chatbot_response(id):
 @app.route('/response/<int:id>/<value>', methods=['POST'])
 def verification_check(id, value):
 	msg = "this is the id " + str(id) + " and string value " + str(value)
-	resp = make_response(message, 200)
+	resp = make_response(msg, 200)
 	return resp
 
 def fb_msg_parse(data):
