@@ -28,7 +28,7 @@ def api_ai_query(text, comment_id):
 
 
 def eng_response(message_text, sender_id, recipient_id, comment_id):
-	message_text = normalization_redis.eng_word_correction(message_text)
+	#message_text = normalization_redis.eng_word_correction(message_text)
 	query(update_query_normalization, (message_text, comment_id))
 	try:
 		api_response = api_ai_query(message_text, comment_id)

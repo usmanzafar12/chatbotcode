@@ -21,6 +21,8 @@ from word_normalization import *
 import redis
 from urdu_flow import *
 from english_flow import *
+from google.cloud import vision
+from google.cloud.vision import types
 
 
 try:
@@ -63,15 +65,27 @@ def handle_message_dummy():
 	data = request.get_json()
 	sender_id, recipient_id, comment_id, message_text = fb_msg_parse(data)
 	session['session_id'] = hl.md5(str(sender_id)).hexdigest()
-	logging.info("Facebook message parsed")
+	message_type = message_attachment_check(data)
+	if message_type == 'audio':
+		send_message_response(sender_id, comment_id, 'The bot doesnt support \
+		 						audio')
+		return Response(status=200)
+
+	if message_type == 'image':
+		uri = get_uri(data)
+		landmark = detect_landmarks_uri(uri)
+		response = "You are near " + landmark
+		send_message_response(sender_id, comment_id, response)
+		return Response(status=200)
+
+	#
 	if lang_detect(message_text) == 'urdu':
 		response = urdu_response(message_text, sender_id, \
 									recipient_id, comment_id)
 	else:
 		response = eng_response(message_text, sender_id, \
 									recipient_id, comment_id)
-	logging.info("This is the type of the response")
-	logging.info(type(response))
+
 	if type(response) is unicode:
 		send_message_response(sender_id, comment_id, response)
 	return Response(status=200)
@@ -127,7 +141,7 @@ def chatbot_response(id):
 @app.route('/response/<int:id>/<value>', methods=['POST'])
 def verification_check(id, value):
 	msg = "this is the id " + str(id) + " and string value " + str(value)
-	resp = make_response(msg, 200)
+	resp = make_response(message, 200)
 	return resp
 
 def fb_msg_parse(data):
@@ -160,6 +174,36 @@ def lang_detect(message_text):
 	else:
 		return 'english'
 
+
+def detect_landmarks_uri(uri):
+	"""Detects landmarks in the file located in Google Cloud Storage or on the
+	Web."""
+	image_from_uri = requests.get(uri).content
+	client = vision.ImageAnnotatorClient()
+	image = types.Image(content=image_from_uri)
+	response = client.landmark_detection(image=image)
+	#logging.info("the response should be next")
+	#logging.info(response)
+	landmarks = response.landmark_annotations
+	return landmarks[0].description
+
+
+def get_uri(data):
+	uri = data['entry'][0]['messaging'][0]['message']\
+				['attachments'][0]['payload']['url']
+	return uri
+
+
+def message_attachment_check(data):
+	for entry in data["entry"]:
+		for messaging_event in entry["messaging"]:
+			if "attachments" in messaging_event["message"].keys():
+				uri = messaging_event["message"]["attachments"][0]['payload']['url']
+				if messaging_event["message"]["attachments"][0]['type'] == 'audio':
+					return 'audio'
+				if messaging_event["message"]["attachments"][0]['type'] == 'image':
+					return 'image'
+	return None
 
 if __name__ == '__main__':
 	app.run(port=4000)

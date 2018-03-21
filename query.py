@@ -31,8 +31,11 @@ update_query_normalization = "UPDATE response8 SET  \
 
 
 def query(sql=None, values=None, insert=False):
-    conn = psycopg2.connect(database="postgres", user="postgres", password="9090",\
-                            host="127.0.0.1", port="5432")
+    conn = psycopg2.connect(database="postgres", user="postgres", password="usman",\
+                                host="127.0.0.1", port="5432")
+
+    #conn = psycopg2.connect(database="postgres", user="postgres", password="9090",\
+    #                        host="127.0.0.1", port="5432")
     cur = conn.cursor()
     cur.execute(sql, values)
     conn.commit()
