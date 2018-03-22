@@ -183,7 +183,7 @@ def detect_landmarks_uri(uri):
 	image = types.Image(content=image_from_uri)
 	response = client.landmark_detection(image=image)
 	#logging.info("the response should be next")
-	#logging.info(response)
+	logging.info(response)
 	landmarks = response.landmark_annotations
 	return landmarks[0].description
 
