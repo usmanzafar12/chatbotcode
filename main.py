@@ -17,12 +17,12 @@ from nltk import word_tokenize
 import re
 import hashlib as hl
 import uuid
-from word_normalization import *
+#from word_normalization import *
 import redis
-from urdu_flow import *
+#from urdu_flow import *
 from english_flow import *
-from google.cloud import vision
-from google.cloud.vision import types
+#from google.cloud import vision
+#from google.cloud.vision import types
 
 
 try:
@@ -60,36 +60,45 @@ def handle_verification():
 
 @app.route('/', methods=['POST'])
 def handle_message_dummy():
-	# Primary function in which whole code is run
-	logging.info("Facebook push notification received")
-	data = request.get_json()
-	sender_id, recipient_id, comment_id, message_text = fb_msg_parse(data)
-	session['session_id'] = hl.md5(str(sender_id)).hexdigest()
-	message_type = message_attachment_check(data)
-	if message_type == 'audio':
-		send_message_response(sender_id, comment_id, 'The bot doesnt support \
-		 						audio')
+	try:
+		# Primary function in which whole code is run
+		logging.info("Facebook push notification received")
+		data = request.get_json()
+		sender_id, recipient_id, comment_id, message_text = fb_msg_parse(data)
+		session['session_id'] = hl.md5(sender_id.encode('utf-8')).hexdigest()
+		message_type = message_attachment_check(data)
+		if message_type == 'audio':
+			send_message_response(sender_id, comment_id, 'The bot doesnt support \
+			 						audio')
+			return Response(status=200)
+
+		if message_type == 'image':
+			uri = get_uri(data)
+			landmark = detect_landmarks_uri(uri)
+			response = "You are near " + landmark
+			send_message_response(sender_id, comment_id, response)
+			return Response(status=200)
+
+		#
+		if lang_detect(message_text) == 'urdu':
+			response = urdu_response(message_text, sender_id, \
+										recipient_id, comment_id)
+		else:
+			response = eng_response(message_text, sender_id, \
+										recipient_id, comment_id)
+
+		# import pdb; pdb.set_trace();
+		if type(response) is str:
+			print("-----------Response is Here-----------")
+			print(sender_id)
+			print(comment_id)
+			print(response)
+			print("-----------Response is Here-----------")
+			send_message_response(sender_id, comment_id, response)
 		return Response(status=200)
-
-	if message_type == 'image':
-		uri = get_uri(data)
-		landmark = detect_landmarks_uri(uri)
-		response = "You are near " + landmark
-		send_message_response(sender_id, comment_id, response)
+	except Exception as e:
+		print(e)
 		return Response(status=200)
-
-	#
-	if lang_detect(message_text) == 'urdu':
-		response = urdu_response(message_text, sender_id, \
-									recipient_id, comment_id)
-	else:
-		response = eng_response(message_text, sender_id, \
-									recipient_id, comment_id)
-
-	if type(response) is unicode:
-		send_message_response(sender_id, comment_id, response)
-	return Response(status=200)
-
 
 @app.route('/dialogflow', methods=['POST'])
 def dialogflow():
@@ -169,6 +178,7 @@ def lang_detect(message_text):
 	detected_lang = translator.detect(message_text).lang
 	logging.info(" This is the value the language detected")
 	logging.info(detected_lang)
+	# import pdb; pdb.set_trace()
 	if detected_lang.find('en') == -1:
 		return 'urdu'
 	else:

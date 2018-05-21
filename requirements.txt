@@ -5,8 +5,10 @@ nltk
 apiai
 lxml
 matplotlib
-MySQL
 numpy
 Pillow
 crcmod
 pycrypto
+psycopg2
+pandas
+redis
