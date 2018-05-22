@@ -38,7 +38,7 @@ app = Flask(__name__)
 app.secret_key = str(uuid.uuid4())
 logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 logger = logging.getLogger(__name__)
-PAT = 'EAACh9MQ3zy8BAJuw2AdCaSezuGIio39aVlFENWK1ZA0LHVEcU3BnhqFRrUJrZAKEfCdp9DZBJa8UAZB0ZCFb7FWtJ6mZAzUVenZCzEcJX8vg7HxEAwgcL93YOfXxZCb9CJygQpMo8J49JR6AGYh67CeoMGZAAs9OZCsUPrhhA19wFmlAZDZD'
+PAT = 'EAACh9MQ3zy8BAMLZBBvZCoOFwLU3E8nwNsQ6mnXud9dlZB6a8izcvZChkaVbB7sP9lJXnZCooXtwALKk7bwRAWqgb5Kowl13BdppFDgEZA3NLaZCOCZBTQ3RCUWsGueZCw4lAkO3mvzKD7CnOCZCV3PWucUO7XPZCFdn82SpyDTJkoH6QZDZD'
 VERIFY_TOKEN = 'test'
 CLIENT_ACCESS_TOKEN = '3a67ab4afb49424587183ae8b04bf88b'
 ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
